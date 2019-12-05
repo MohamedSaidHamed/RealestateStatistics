@@ -17,6 +17,7 @@ public class MainController {
     DataHandlingService dataHandlingService;
 
     /**
+     * API to fetch all the data
      * @return
      * @throws Exception
      */
@@ -27,6 +28,7 @@ public class MainController {
     }
 
     /**
+     * API to sort all available houses from a specific street address based on distance ASC
      * @return
      * @throws Exception
      */
@@ -37,6 +39,7 @@ public class MainController {
     }
 
     /**
+     * API to sort houses' rooms based on the desired room number ASC
      * @return
      * @throws Exception
      */
@@ -47,6 +50,7 @@ public class MainController {
     }
 
     /**
+     * API to return houses that has missing data
      * @return
      * @throws Exception
      */
@@ -57,12 +61,15 @@ public class MainController {
     }
 
     /**
+     * API to decide which house to move to based on street address, room number and prices
      * @return
      * @throws Exception
      */
-    @GetMapping(value = "/moveToHouseWithConstrains/{street}")
-    public Houses moveToHouseWithConstrains(@PathVariable String street) throws Exception {
-        Houses house = dataHandlingService.moveToNearestHouseWithConstrains(street);
+    @GetMapping(value = "/moveToHouseWithConstrains/{street}/{room}/{price}")
+    public Houses moveToHouseWithConstrains(@PathVariable String street,
+                                            @PathVariable int room,
+                                            @PathVariable int price) throws Exception {
+        Houses house = dataHandlingService.moveToNearestHouseWithConstrains(street, room, price);
         return house;
     }
 }

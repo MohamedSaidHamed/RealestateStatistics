@@ -80,13 +80,13 @@ public class DataHandlingService {
      * @return desired house Object
      * @throws Exception
      */
-    public Houses moveToNearestHouseWithConstrains(String street) throws Exception {
+    public Houses moveToNearestHouseWithConstrains(String street, int room, int price) throws Exception {
         DataModel dataModel = dataFetchingService.dataFetching();
         List<Houses> housesList = dataModel.getHouses();
         Houses sourceHouse = getHouseByName(street, housesList);
         housesList = sortByDistance(sourceHouse, housesList);
         Houses house = housesList.stream()
-                .filter(h -> h.getParams() != null  && h.getParams().getRooms() !=null &&  h.getParams().getRooms() > 10 && h.getParams().getValue() < 5000000)
+                .filter(h -> h.getParams() != null  && h.getParams().getRooms() !=null &&  h.getParams().getRooms() > room && h.getParams().getValue() < price)
                 .findFirst().orElse(null);
         return house;
     }

@@ -69,8 +69,8 @@ class MainControllerTest {
 
     @Test
     void moveToHouseWithConstrains() throws Exception {
-        assertNotNull(dataHandlingService.moveToNearestHouseWithConstrains("Eberswalder Straße 55"));
-        Houses house = dataHandlingService.moveToNearestHouseWithConstrains("Eberswalder Straße 55");
+        assertNotNull(dataHandlingService.moveToNearestHouseWithConstrains("Eberswalder Straße 55", 5, 5000000));
+        Houses house = dataHandlingService.moveToNearestHouseWithConstrains("Eberswalder Straße 55", 5, 5000000);
         Assert.assertEquals(house.getStreet(),"Hermannstraße 1");
 
     }

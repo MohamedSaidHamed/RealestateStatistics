@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class DataFetchingService {
     /**
+     * method to fetch and serialize the data from the provided API
      * @return
      * @throws Exception
      */
