@@ -23,7 +23,7 @@ public class MainController {
      */
     @GetMapping(value = "/fetchData/", produces = "application/json")
     public DataModel fetchData() throws Exception {
-        DataModel dataModel = dataFetchingService.dataFetching();
+        DataModel dataModel = dataFetchingService.getAllHousesData();
         return dataModel;
     }
 
@@ -33,8 +33,9 @@ public class MainController {
      * @throws Exception
      */
     @GetMapping(value = "/sortByDistanceFrom/{street}")
-    public DataModel sortByDistance(@PathVariable String street) throws Exception {
-        DataModel dataModel = dataHandlingService.sortListByDistance(street);
+    public DataModel sortByDistance(@PathVariable String street) {
+        DataModel dataModel = dataFetchingService.getAllHousesData();
+        dataModel = dataHandlingService.sortByDistanceToStreet(street,dataModel);
         return dataModel;
     }
 
@@ -44,8 +45,9 @@ public class MainController {
      * @throws Exception
      */
     @GetMapping(value = "/sortByRoomsGreaterThan/{rooms}")
-    public DataModel sortByRooms(@PathVariable int rooms) throws Exception {
-        DataModel dataModel = dataHandlingService.sortListByRoom(rooms);
+    public DataModel sortByRooms(@PathVariable int rooms) {
+        DataModel dataModel = dataFetchingService.getAllHousesData();
+        dataModel = dataHandlingService.sortListByRoom(rooms,dataModel);
         return dataModel;
     }
 
@@ -55,8 +57,9 @@ public class MainController {
      * @throws Exception
      */
     @GetMapping(value = "/fetchMissingHousesData/")
-    public DataModel fetchMissingHousesData() throws Exception {
-        DataModel dataModel = dataHandlingService.fetchMissingHousesDataFromList();
+    public DataModel fetchMissingHousesData() {
+        DataModel dataModel = dataFetchingService.getAllHousesData();
+        dataModel = dataHandlingService.fetchMissingHousesDataFromList(dataModel);
         return dataModel;
     }
 
@@ -66,10 +69,11 @@ public class MainController {
      * @throws Exception
      */
     @GetMapping(value = "/moveToHouseWithConstrains/{street}/{room}/{price}")
-    public Houses moveToHouseWithConstrains(@PathVariable String street,
-                                            @PathVariable int room,
-                                            @PathVariable int price) throws Exception {
-        Houses house = dataHandlingService.moveToNearestHouseWithConstrains(street, room, price);
+    public House moveToHouseWithConstrains(@PathVariable String street,
+                                           @PathVariable int room,
+                                           @PathVariable int price) throws Exception {
+        DataModel dataModel = dataFetchingService.getAllHousesData();
+        House house = dataHandlingService.moveToNearestHouseWithConstrains(street, room, price,dataModel);
         return house;
     }
 }

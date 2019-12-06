@@ -12,7 +12,7 @@ public class DataFetchingService {
      * @return
      * @throws Exception
      */
-    public DataModel dataFetching() throws Exception{
+    public DataModel getAllHousesData(){
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<DataModel> response
                 = restTemplate.getForEntity("https://demo.interfacema.de/programming-assessment-1.0/buildings" + "/1", DataModel.class);

@@ -13,20 +13,15 @@ import java.util.stream.Collectors;
 
 @Component
 public class DataHandlingService {
-    @Autowired
-    DataFetchingService dataFetchingService;
 
     /**
      * A method that sorts list of houses by distance based on a house source ascending
      * @param street
      * @return DataModel object that contains a list of sorted houses
-     * @throws Exception
      */
-    public DataModel sortListByDistance(String street) throws Exception {
-        DataModel dataModel = dataFetchingService.dataFetching();
-        List<Houses> housesList = dataModel.getHouses();
-        Houses sourceHouse = getHouseByName(street, housesList);
-        housesList = sortByDistance(sourceHouse, housesList);
+    public DataModel sortByDistanceToStreet(String street,DataModel dataModel){
+        House sourceHouse = getHouseByName(street, dataModel.getHouses());
+        List<House> housesList = sortByDistance(sourceHouse, dataModel.getHouses());
         dataModel.setHouses(housesList);
         return dataModel;
     }
@@ -37,14 +32,14 @@ public class DataHandlingService {
      * @return DataModel object that contains a list of sorted houses
      * @throws Exception
      */
-    public DataModel sortListByRoom(int numOfRooms) throws Exception {
-        DataModel dataModel = dataFetchingService.dataFetching();
-        List<Houses> housesList = dataModel.getHouses();
-        housesList = housesList.stream().filter(h -> h.getParams() != null && h.getParams().getRooms() != null && h.getParams().getRooms() > numOfRooms)
+    public DataModel sortListByRoom(int numOfRooms, DataModel dataModel ){
+        List<House> housesList = dataModel.getHouses();
+        housesList = housesList.stream().filter(h -> h.getParams() != null && h.getParams().getRooms() != null &&
+                h.getParams().getRooms() > numOfRooms)
                 .collect(Collectors.toList());
-        Collections.sort(housesList, new Comparator<Houses>() {
+        Collections.sort(housesList, new Comparator<House>() {
             @Override
-            public int compare(Houses o1, Houses o2) {
+            public int compare(House o1, House o2) {
                 return o1.getParams().getRooms().compareTo(o2.getParams().getRooms());
             }
         });
@@ -57,10 +52,9 @@ public class DataHandlingService {
      * @return DataModel object that contains a list of houses
      * @throws Exception
      */
-    public DataModel fetchMissingHousesDataFromList() throws Exception {
-        DataModel dataModel = dataFetchingService.dataFetching();
-        List<Houses> housesList = dataModel.getHouses();
-        List<Houses> filteredHousesList = new ArrayList<>();
+    public DataModel fetchMissingHousesDataFromList(DataModel dataModel )  {
+        List<House> housesList = dataModel.getHouses();
+        List<House> filteredHousesList = new ArrayList<>();
         housesList.stream()
                 .filter(h -> !h.getStreet().isEmpty())
                 .forEach(h -> {
@@ -70,7 +64,7 @@ public class DataHandlingService {
                     }
                 });
         housesList.removeAll(filteredHousesList);
-        housesList = housesList.stream().sorted(Comparator.comparing(Houses::getStreet)).collect(Collectors.toList());
+        housesList = housesList.stream().sorted(Comparator.comparing(House::getStreet)).collect(Collectors.toList());
         dataModel.setHouses(housesList);
         return dataModel;
     }
@@ -80,28 +74,14 @@ public class DataHandlingService {
      * @return desired house Object
      * @throws Exception
      */
-    public Houses moveToNearestHouseWithConstrains(String street, int room, int price) throws Exception {
-        DataModel dataModel = dataFetchingService.dataFetching();
-        List<Houses> housesList = dataModel.getHouses();
-        Houses sourceHouse = getHouseByName(street, housesList);
-        housesList = sortByDistance(sourceHouse, housesList);
-        Houses house = housesList.stream()
-                .filter(h -> h.getParams() != null  && h.getParams().getRooms() !=null &&  h.getParams().getRooms() > room && h.getParams().getValue() < price)
+    public House moveToNearestHouseWithConstrains(String street, int room, int price,DataModel dataModel )  {
+        House sourceHouse = getHouseByName(street, dataModel.getHouses());
+        List<House> housesList = sortByDistance(sourceHouse, dataModel.getHouses());
+        House house = housesList.stream()
+                .filter(h -> h.getParams() != null  && h.getParams().getRooms() !=null &&
+                        h.getParams().getRooms() > room && h.getParams().getValue() < price)
                 .findFirst().orElse(null);
         return house;
-    }
-
-    /**
-     * A reusable method to calculate the distance between any two coordinates
-     * @param coords1
-     * @param coords2
-     * @return distance
-     */
-    public static double calculateDistance(Coords coords1, Coords coords2) {
-        if(coords1 == coords2 ){
-            return 0;
-        }
-        return Point2D.distance(coords1.getLat(), coords1.getLon(), coords2.getLat(), coords2.getLon());
     }
 
     /**
@@ -109,18 +89,10 @@ public class DataHandlingService {
      * @param sourceHouse
      * @param destHousesList
      * @return list of sorted houses based on distance ascending
-     * @throws Exception
      */
-    private static List<Houses> sortByDistance(Houses sourceHouse, List<Houses> destHousesList) throws Exception{
-        destHousesList.stream()
-                .forEach(h -> {
-                    h.setDistance(
-                            calculateDistance(sourceHouse.getCoords(), h.getCoords()));
-                });
-
-        destHousesList = destHousesList.stream().filter(s -> s.getDistance() > 0)
-                .sorted(Comparator.comparingDouble(Houses::getDistance)).collect(Collectors.toList());
-        return destHousesList;
+    private static List<House> sortByDistance(House sourceHouse, List<House> destHousesList){
+        return destHousesList.stream().filter(house -> !house.equals(sourceHouse))
+                .sorted(Comparator.comparingDouble(house -> house.distanceTo(sourceHouse))).collect(Collectors.toList());
     }
 
     /**
@@ -128,9 +100,8 @@ public class DataHandlingService {
      * @param name
      * @param housesList
      * @return house object
-     * @throws Exception
      */
-    private static Houses getHouseByName(String name, List<Houses> housesList) throws Exception{
+    private static House getHouseByName(String name, List<House> housesList){
         return  housesList.stream()
                 .filter(s -> s.getStreet().equalsIgnoreCase(name))
                 .findFirst().orElse(null);

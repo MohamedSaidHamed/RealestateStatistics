@@ -2,7 +2,10 @@ package com.realestate.statistics.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class Houses {
+import java.awt.geom.Point2D;
+import java.util.Objects;
+
+public class House {
 
     private Coords coords;
     private Params params;
@@ -49,5 +52,32 @@ public class Houses {
                 ", params=" + params +
                 ", street='" + street + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        House house = (House) o;
+        return Double.compare(house.distance, distance) == 0 &&
+                Objects.equals(coords, house.coords) &&
+                Objects.equals(params, house.params) &&
+                Objects.equals(street, house.street);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coords, params, street, distance);
+    }
+    /**
+     * A method to calculate the distance between coordinates
+     * @param house
+     * @return distance
+     */
+    public double distanceTo(House house){
+        if(coords == house.getCoords() ){
+            return 0;
+        }
+        return Point2D.distance(coords.getLat(), coords.getLon(), house.getCoords().getLat(), house.getCoords().getLon());
     }
 }

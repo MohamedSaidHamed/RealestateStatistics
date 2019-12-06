@@ -3,13 +3,13 @@ package com.realestate.statistics.model;
 import java.util.List;
 
 public class DataModel {
-    List<Houses> houses;
+    List<House> houses;
 
-    public List<Houses> getHouses() {
+    public List<House> getHouses() {
         return houses;
     }
 
-    public void setHouses(List<Houses> houses) {
+    public void setHouses(List<House> houses) {
         this.houses = houses;
     }
 
