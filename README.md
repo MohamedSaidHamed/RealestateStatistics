@@ -10,11 +10,11 @@ List of API methods to access
 </tr>
 <tr>
 <td>Sort Houses by distance from address</td>
-<td>http://localhost:8080/sortByDistanceFrom/Eberswalder%20Stra%C3%9Fe%2055</td>
+<td>http://localhost:8080/sortByDistanceFrom/{address}</td>
 </tr>
 <tr>
 <td>Sort Houses by number of rooms</td>
-<td>http://localhost:8080/sortByRoomsGreaterThan/5</td>
+<td>http://localhost:8080/sortByRoomsGreaterThan/{roomNumber}</td>
 </tr>
 <tr>
 <td>Fetch houses that have missing data</td>
@@ -22,6 +22,6 @@ List of API methods to access
 </tr>
 <tr>
 <td>Move to house with constrains</td>
-<td>http://localhost:8080/moveToHouseWithConstrains/Eberswalder%20Stra%C3%9Fe%2055/5/5000000</td>
+<td>http://localhost:8080/moveToHouseWithConstrains/{address}/{roomNumber}/{price}</td>
 </tr>
 </table>
